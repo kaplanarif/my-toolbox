@@ -1,5 +1,11 @@
 # My Toolbox
 
+![License](https://img.shields.io/github/license/kaplanarif/my-toolbox)
+![Stars](https://img.shields.io/github/stars/kaplanarif/my-toolbox)
+![Forks](https://img.shields.io/github/forks/kaplanarif/my-toolbox)
+![Issues](https://img.shields.io/github/issues/kaplanarif/my-toolbox)
+![Last Commit](https://img.shields.io/github/last-commit/kaplanarif/my-toolbox)
+
 A collection of automation scripts and utilities.
 
 ## Scripts
