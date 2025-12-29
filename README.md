@@ -4,7 +4,7 @@ A collection of automation scripts and utilities.
 
 ## Scripts
 
-### check-mail-get-code.py
+### check-mail-and-copy-to-clipboard
 
 Automates the process of retrieving FortiClient authentication codes from macOS Mail.app.
 
@@ -21,6 +21,7 @@ Automates the process of retrieving FortiClient authentication codes from macOS 
 
 **Usage:**
 ```bash
+cd check-mail-and-copy-to-clipboard
 python3 check-mail-get-code.py
 ```
 
@@ -41,8 +42,7 @@ You can modify the script parameters in the `main()` function:
 - `minutes_back`: How far back to check emails (default: 10 minutes)
 - `mailbox_name`: Which mailbox to check (default: "Inbox")
 
-### Other Scripts
-
+**Additional utilities in this folder:**
 - `debug-mail.py`: Debug utility for Mail.app operations
 - `list-mailboxes.py`: Lists available mailboxes in Mail.app
 

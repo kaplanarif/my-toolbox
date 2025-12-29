@@ -12,17 +12,17 @@ def get_forticlient_code(
     mailbox_name="Inbox"
 ):
     """
-    Mail'den FortiClient kodunu çıkart
-    
+    Extract FortiClient code from Mail
+
     Args:
-        sender_filter: Gönderici email adresi (örn: "noreply@company.com")
-        subject_filter: Konu anahtar kelimesi (örn: "verification")
-        unread_only: Sadece okunmamış mailleri kontrol et
-        minutes_back: Son kaç dakikadaki mailleri kontrol et
-        mailbox_name: Kontrol edilecek mail klasörü
+        sender_filter: Sender email address (e.g., "noreply@company.com")
+        subject_filter: Subject keyword (e.g., "verification")
+        unread_only: Check only unread emails
+        minutes_back: How many minutes back to check emails
+        mailbox_name: Mailbox folder to check
     """
     
-    # AppleScript komutu
+    # AppleScript command
     script = f'''
     tell application "Mail"
         set resultList to {{}}
@@ -76,50 +76,50 @@ def get_forticlient_code(
         )
         
         if result.returncode == 0 and result.stdout:
-            # Kod çıkart (subject veya content'ten 6 haneli sayı)
+            # Extract code (6-digit number from subject or content)
             match = re.search(r'\b(\d{6})\b', result.stdout)
             if match:
                 return match.group(1)
             else:
-                # Alphanumeric kod ara
+                # Search for alphanumeric code
                 match = re.search(r'\b([A-Z0-9]{6})\b', result.stdout)
                 return match.group(1) if match else None
         else:
-            print("❌ Mail okunamadı veya kod bulunamadı")
+            print("❌ Could not read mail or code not found")
             return None
-            
+
     except subprocess.TimeoutExpired:
-        print("❌ Mail okuma zaman aşımına uğradı")
+        print("❌ Mail reading timed out")
         return None
     except Exception as e:
-        print(f"❌ Hata: {e}")
+        print(f"❌ Error: {e}")
         return None
 
 
 def copy_code_to_clipboard(code):
     """
-    Kodu clipboard'a kopyala
+    Copy code to clipboard
     """
     try:
-        # macOS pbcopy komutu kullan
+        # Use macOS pbcopy command
         subprocess.run(
             ['pbcopy'],
             input=code.encode('utf-8'),
             check=True
         )
-        print(f"📋 Kod clipboard'a kopyalandı: {code}")
-        print("👉 Şimdi FortiClient'e yapıştırabilirsin (Cmd+V)")
+        print(f"📋 Code copied to clipboard: {code}")
+        print("👉 You can now paste into FortiClient (Cmd+V)")
         return True
 
     except Exception as e:
-        print(f"❌ Clipboard hatası: {e}")
-        print(f"Manuel kod: {code}")
+        print(f"❌ Clipboard error: {e}")
+        print(f"Manual code: {code}")
         return False
 
 
 def check_new_mail():
     """
-    Mail.app'te yeni mail kontrolü yap
+    Check for new mail in Mail.app
     """
     try:
         script = '''
@@ -130,21 +130,21 @@ def check_new_mail():
         subprocess.run(['osascript', '-e', script], capture_output=True)
         return True
     except Exception as e:
-        print(f"⚠️  Mail check hatası: {e}")
+        print(f"⚠️  Mail check error: {e}")
         return False
 
 
 def main():
-    print("🔄 Mail kontrol döngüsü başlatılıyor...")
+    print("🔄 Starting mail check loop...")
     print("Press Ctrl+C to stop\n")
 
     try:
         while True:
-            # Yeni mail kontrol et
+            # Check for new mail
             check_new_mail()
-            print("🔍 Mail kontrol ediliyor...")
+            print("🔍 Checking mail...")
 
-            # Kod ara
+            # Search for code
             code = get_forticlient_code(
                 sender_filter="DoNotReply@fortinet-notifications.com",
                 subject_filter="AuthCode",
@@ -154,16 +154,16 @@ def main():
             )
 
             if code:
-                print(f"✅ Kod bulundu: {code}")
+                print(f"✅ Code found: {code}")
                 copy_code_to_clipboard(code)
-                print("\n✨ İşlem tamamlandı! Script durduruluyor.")
+                print("\n✨ Process completed! Stopping script.")
                 break
             else:
-                print("⏳ Kod bulunamadı, 5 saniye sonra tekrar denenecek...\n")
+                print("⏳ Code not found, retrying in 5 seconds...\n")
                 time.sleep(5)
 
     except KeyboardInterrupt:
-        print("\n\n⛔ Script durduruldu.")
+        print("\n\n⛔ Script stopped.")
 
 
 if __name__ == "__main__":
